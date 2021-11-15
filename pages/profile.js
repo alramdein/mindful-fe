@@ -13,7 +13,7 @@ function Profile() {
     user && (
       <div>
         <p>{JSON.stringify(user, null, 2)}</p>
-        <Image src={user.picture} alt={user.name} />
+        <Image src={user.picture} height='100' width='100' alt={user.name} />
         <h2>name: </h2><span>{user.name}</span>
         <h2>email: </h2><span>{user.email}</span>
         <h1>

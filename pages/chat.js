@@ -1,4 +1,5 @@
 import React from 'react';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Stack, Typography, TextField } from '@mui/material';
@@ -9,6 +10,11 @@ import Message from '../comps/Chat/Message';
 import ChatRoomHeader from '../comps/Chat/ChatRoomHeader';
 
 const ChatPage = () => {
+	const { user, error, isLoading } = useUser();
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>{error.message}</div>;
+
 	return (
 		<Stack
 			direction="row"
@@ -141,4 +147,4 @@ const ChatPage = () => {
 	);
 };
 
-export default ChatPage;
+export default withPageAuthRequired(ChatPage);
