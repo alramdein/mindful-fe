@@ -5,7 +5,12 @@ import { Box } from '@mui/system';
 
 const ChatPanel = ({ image, partnerName, message, lastMessage }) => {
 	return (
-		<Stack alignItems="center" direction="row" spacing={2}>
+		<Stack
+			alignItems="center"
+			direction="row"
+			spacing={2}
+			sx={{ cursor: 'pointer' }}
+		>
 			<Box sx={{ width: '15%' }}>
 				<Avatar
 					alt={partnerName}
@@ -45,7 +50,7 @@ const ChatPanel = ({ image, partnerName, message, lastMessage }) => {
 						textOverflow: 'ellipsis',
 					}}
 				>
-					{Math.ceil(lastMessage / 60)} min
+					{Math.ceil(lastMessage)} min
 				</Typography>
 			</Box>
 		</Stack>
