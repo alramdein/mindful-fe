@@ -42,3 +42,9 @@ a {
 #chat-message:focus {
 	color: white;
 }
+
+#friend-search {
+	height: 1px;
+	border-radius: 100px;
+	border: none;
+}

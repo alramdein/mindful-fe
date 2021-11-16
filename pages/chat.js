@@ -1,7 +1,6 @@
-import React from 'react';
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import React, { useRef, useState } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Stack, Typography, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 
@@ -9,8 +8,30 @@ import ChatPanel from '../comps/Chat/ChatPanel';
 import Message from '../comps/Chat/Message';
 import ChatRoomHeader from '../comps/Chat/ChatRoomHeader';
 
+import ChatService from '../services/ChatService';
+
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
+	const [keyword, setKeyword] = useState('');
+
+	const getChatRooms = async () => {
+		try {
+			const chatService = new ChatService();
+
+			const response = ChatService.getChatRooms({
+				sub: user.sub,
+				keyword,
+			});
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
+
+	useEffect(() => {
+		(async () => {
+			await getChatRooms();
+		})();
+	}, []);
 
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>{error.message}</div>;
@@ -30,22 +51,34 @@ const ChatPage = () => {
 			}}
 		>
 			<Box sx={{ width: '30%' }} px={5}>
-				<Stack>
+				<Stack spacing={2}>
 					<Stack
 						alignItems="center"
 						direction="row"
 						justifyContent="space-between"
-						mb={3}
 						sx={{ maxHeight: '15vh' }}
 					>
 						<Typography sx={{ color: 'white', fontSize: 24 }}>
 							Chat
 						</Typography>
 
-						<Stack direction="row" spacing={5}>
-							<AddOutlinedIcon /> <SearchOutlinedIcon />
+						<Stack direction="row">
+							<AddOutlinedIcon />
 						</Stack>
 					</Stack>
+
+					<TextField
+						fullWidth
+						id="friend-search"
+						placeholder="Search friend..."
+						color="secondary"
+						onChange={(e) => console.log(e)}
+						ref={searchInputRef}
+						sx={{
+							background:
+								'linear-gradient(149deg, rgba(116,118,164,1) 0%, rgba(59,59,90,1) 100%)',
+						}}
+					/>
 
 					<Stack
 						className="chat-panel"
@@ -119,6 +152,7 @@ const ChatPage = () => {
 						].map(({ message, is_my_message }, index) => {
 							return (
 								<Message
+									key={`msg-key_${index}`}
 									message={message}
 									isMyMessage={is_my_message}
 								/>

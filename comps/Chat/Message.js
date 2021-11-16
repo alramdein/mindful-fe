@@ -7,6 +7,7 @@ const Message = ({ message, isMyMessage }) => {
 			<Typography
 				color="white"
 				textAlign={isMyMessage ? 'end' : 'start'}
+				fontSize={1}
 				py={2}
 				px={3}
 				sx={{
