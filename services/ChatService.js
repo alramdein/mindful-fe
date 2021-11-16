@@ -5,7 +5,7 @@ export default class ChatService extends RequestAdapterService {
 
 	async createNewChat(payload) {
 		try {
-			// const { data } = await super.sendGetRequest(
+			// const { data } = await super.sendPostRequest(
 			// 	`${this.baseURL}/chat/partner-room`,
 			// 	payload,
 			// 	true
@@ -15,8 +15,7 @@ export default class ChatService extends RequestAdapterService {
 				{
 					partner_name: 'Chifuyu',
 					partner_avatar: 'url_avatar_chifuyu',
-					last_partner_message: 'Ohhh',
-					last_chat_minute: 20573,
+					room_id: 1,
 				},
 			];
 			return data;

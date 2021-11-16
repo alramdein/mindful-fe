@@ -4,6 +4,7 @@ import { Avatar, Stack, Typography, TextField, Skeleton } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import ChatPanel from '../comps/Chat/ChatPanel';
 import Message from '../comps/Chat/Message';
@@ -92,7 +93,7 @@ const ChatPage = () => {
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>{error.message}</div>;
 
-	console.log(partners);
+	console.log(selectedRoom);
 
 	return (
 		<Stack
@@ -121,10 +122,17 @@ const ChatPage = () => {
 						</Typography>
 
 						<Stack direction="row">
-							<AddOutlinedIcon
-								sx={{ cursor: 'pointer' }}
-								onClick={openChoosePartnerPanel}
-							/>
+							{!isSelectingPartner ? (
+								<AddOutlinedIcon
+									sx={{ cursor: 'pointer' }}
+									onClick={openChoosePartnerPanel}
+								/>
+							) : (
+								<ArrowBackIosIcon
+									sx={{ cursor: 'pointer' }}
+									onClick={() => setIsSelectingPartner(false)}
+								/>
+							)}
 						</Stack>
 					</Stack>
 
@@ -169,7 +177,12 @@ const ChatPage = () => {
 										}) => (
 											<ChatPanel
 												onClick={() =>
-													setSelectedRoom(room_id)
+													setSelectedRoom({
+														avatar: partner_avatar,
+														roomId: room_id,
+														partnerName:
+															partner_name,
+													})
 												}
 												partnerName={partner_name}
 												image={partner_avatar}
@@ -209,6 +222,7 @@ const ChatPage = () => {
 											alignItems="center"
 											spacing={2}
 											direction="row"
+											sx={{ cursor: 'pointer' }}
 											onClick={() =>
 												createNewChat({
 													avatar,
@@ -218,7 +232,11 @@ const ChatPage = () => {
 												})
 											}
 										>
-											<Box sx={{ width: '15%' }}>
+											<Box
+												sx={{
+													width: '15%',
+												}}
+											>
 												<Avatar
 													alt={partnerName}
 													src={avatar}
@@ -254,9 +272,9 @@ const ChatPage = () => {
 							sx={{ maxHeight: '15vh' }}
 						>
 							<ChatRoomHeader
-								name="Alif R"
+								name={selectedRoom.partnerName}
 								isOnline={true}
-								image={null}
+								image={selectedRoom.avatar}
 							/>
 						</Stack>
 
