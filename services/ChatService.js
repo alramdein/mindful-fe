@@ -5,9 +5,7 @@ export default class ChatService extends RequestAdapterService {
 
 	async createNewChat(payload) {
 		try {
-			const {
-				data: { data },
-			} = await super.sendPostRequest(
+			const { data } = await super.sendPostRequest(
 				`${this.baseURL}/chat/room`,
 				payload,
 				true
@@ -58,7 +56,7 @@ export default class ChatService extends RequestAdapterService {
 		try {
 			const {
 				data: { data },
-			} = await super.sendPostRequest(
+			} = await super.sendGetRequest(
 				`${this.baseURL}/user/partner`,
 				payload,
 				true

@@ -71,8 +71,10 @@ const ChatPage = () => {
 			openChatRoom({
 				partner_name: partnerName,
 				partner_avatar: avatar,
-				roomid: response.roomid,
+				room_id: response.roomid,
 			});
+
+			setIsSelectingPartner(false);
 		} catch (error) {
 			console.error(error.message);
 		}
@@ -131,23 +133,22 @@ const ChatPage = () => {
 		}
 	};
 
-	const openChatRoom = ({ partner_name, partner_avatar, roomid }) => {
+	const openChatRoom = ({ partner_name, partner_avatar, room_id }) => {
 		setSelectedRoom({
 			avatar: partner_avatar,
-			roomId: roomid,
+			roomId: room_id,
 			partnerName: partner_name,
 		});
 
-		socket.emit('join', roomid);
+		socket.emit('join', room_id);
 	};
 
 	const sendMessage = async () => {
-		const timestamp = new Date()
-			.toISOString()
-			.replace(/T/g, ' ')
-			.replace(/Z/g, '');
-
 		try {
+			const timestamp = new Date()
+				.toISOString()
+				.replace(/T/g, ' ')
+				.replace(/Z/g, '');
 			socket.emit('newMessage', {
 				message: newMessage,
 				room_id: selectedRoom.roomId,
@@ -413,7 +414,10 @@ const ChatPage = () => {
 								/>
 							</Stack>
 
-							<SendIcon onClick={sendMessage} />
+							<SendIcon
+								onClick={sendMessage}
+								sx={{ cursor: 'pointer' }}
+							/>
 						</Stack>
 					</Stack>
 				)}
