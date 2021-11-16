@@ -7,14 +7,14 @@ const ChatRoomHeader = ({ isOnline, name, image }) => {
 		<Stack direction="row" spacing={3}>
 			<Box>
 				<Avatar
+					alt={name}
+					src={image}
 					sx={{
 						background: '#303351',
 						width: 50,
 						height: 50,
 					}}
-				>
-					{image || 'AR'}
-				</Avatar>
+				/>
 			</Box>
 
 			<Stack spacing={0.5}>

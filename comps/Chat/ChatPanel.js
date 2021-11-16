@@ -3,9 +3,10 @@ import React from 'react';
 import { Stack, Typography, Avatar } from '@mui/material';
 import { Box } from '@mui/system';
 
-const ChatPanel = ({ image, partnerName, message, lastMessage }) => {
+const ChatPanel = ({ image, partnerName, message, lastMessage, onClick }) => {
 	return (
 		<Stack
+			onClick={onClick}
 			alignItems="center"
 			direction="row"
 			spacing={2}

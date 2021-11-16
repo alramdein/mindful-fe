@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Avatar, Stack, Typography, TextField, Skeleton } from '@mui/material';
 import { Box } from '@mui/system';
+import { io } from 'socket.io-client';
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import SendIcon from '@mui/icons-material/Send';
 
 import ChatPanel from '../comps/Chat/ChatPanel';
 import Message from '../comps/Chat/Message';
@@ -12,22 +14,21 @@ import ChatRoomHeader from '../comps/Chat/ChatRoomHeader';
 
 import ChatService from '../services/ChatService';
 
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL);
+
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
 
+	const [isLoadingMessage, setIsLoadingMessage] = useState(true);
 	const [isLoadingRoom, setIsLoadingRoom] = useState(true);
 	const [isSelectingPartner, setIsSelectingPartner] = useState(false);
 	const [keyword, setKeyword] = useState('');
+	const [messages, setMessages] = useState([]);
+	const [newMessage, setNewMessage] = useState('');
 	const [partnerKeyword, setPartnerKeyword] = useState('');
+	const [partners, setPartners] = useState([]);
 	const [rooms, setRooms] = useState([]);
 	const [selectedRoom, setSelectedRoom] = useState(null);
-	const [partners, setPartners] = useState([]);
-
-	useEffect(() => {
-		(async () => {
-			await getChatRooms();
-		})();
-	}, []);
 
 	useEffect(() => {
 		(async () => {
@@ -37,9 +38,26 @@ const ChatPage = () => {
 
 	useEffect(() => {
 		(async () => {
-			await openChoosePartnerPanel();
+			if (partnerKeyword.length > 0) {
+				await openChoosePartnerPanel();
+			}
 		})();
 	}, [partnerKeyword]);
+
+	useEffect(() => {
+		(async () => {
+			if (selectedRoom) {
+				await getMessagesByRoomId();
+			}
+		})();
+	}, [selectedRoom]);
+
+	socket.on('newMessage', (message) => {
+		const newMessages = [...messages];
+		newMessages.push(message);
+
+		setMessages(newMessages);
+	});
 
 	const createNewChat = async () => {
 		try {
@@ -71,6 +89,23 @@ const ChatPage = () => {
 		}
 	};
 
+	const getMessagesByRoomId = async () => {
+		try {
+			setIsLoadingMessage(true);
+			const chatService = new ChatService();
+
+			const response = await chatService.getMessages({
+				room_id: selectedRoom.roomId,
+			});
+
+			setMessages(response);
+		} catch (error) {
+			console.error(error.message);
+		} finally {
+			setIsLoadingMessage(false);
+		}
+	};
+
 	const openChoosePartnerPanel = async () => {
 		try {
 			setIsLoadingRoom(true);
@@ -90,10 +125,36 @@ const ChatPage = () => {
 		}
 	};
 
+	const openChatRoom = ({ partner_name, partner_avatar, roomid }) => {
+		setSelectedRoom({
+			avatar: partner_avatar,
+			roomId: roomid,
+			partnerName: partner_name,
+		});
+
+		socket.emit('join', roomid);
+	};
+
+	const sendMessage = async () => {
+		const timestamp = new Date()
+			.toISOString()
+			.replace(/T/g, ' ')
+			.replace(/Z/g, '');
+
+		try {
+			socket.emit('newMessage', {
+				message: newMessage,
+				room_id: selectedRoom.roomId,
+				sub: user.sub,
+				timestamp,
+			});
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
+
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>{error.message}</div>;
-
-	console.log(selectedRoom);
 
 	return (
 		<Stack
@@ -159,7 +220,10 @@ const ChatPage = () => {
 									new Array(8)
 										.fill('')
 										.map((_, index) => (
-											<Skeleton varian="text" />
+											<Skeleton
+												varian="text"
+												key={`skltn-key_${index}`}
+											/>
 										))
 								) : rooms.length === 0 ? (
 									<Typography sx={{ color: 'white' }}>
@@ -177,17 +241,18 @@ const ChatPage = () => {
 										}) => (
 											<ChatPanel
 												onClick={() =>
-													setSelectedRoom({
-														avatar: partner_avatar,
-														roomId: room_id,
-														partnerName:
-															partner_name,
+													openChatRoom({
+														partner_name,
+														partner_avatar,
+
+														room_id,
 													})
 												}
 												partnerName={partner_name}
 												image={partner_avatar}
 												message={last_partner_message}
 												lastMessage={last_chat_minute}
+												key={`cht-pnl-key_${room_id}`}
 											/>
 										)
 									)
@@ -282,70 +347,67 @@ const ChatPage = () => {
 							className="chat-room"
 							sx={{
 								maxHeight: '70vh',
+								minHeight: '70vh',
 								overflowY: 'auto',
 								scrollbarWidth: 'none',
 							}}
 							spacing={3}
 						>
-							{[
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged`,
-									is_my_message: true,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. `,
-									is_my_message: false,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged`,
-									is_my_message: true,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. `,
-									is_my_message: false,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged`,
-									is_my_message: true,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. `,
-									is_my_message: false,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged`,
-									is_my_message: true,
-								},
-								{
-									message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. `,
-									is_my_message: false,
-								},
-							].map(({ message, is_my_message }, index) => {
-								return (
-									<Message
-										key={`msg-key_${index}`}
-										message={message}
-										isMyMessage={is_my_message}
-									/>
-								);
-							})}
+							{isLoadingMessage ? (
+								new Array(8)
+									.fill('')
+									.map((_, index) => (
+										<Skeleton
+											varian="text"
+											key={`skltn-key_${index}`}
+										/>
+									))
+							) : messages.length === 0 ? (
+								<Typography sx={{ color: 'white' }}>
+									Start chatting with your fiend
+								</Typography>
+							) : (
+								messages.map(({ message, sub }, index) => {
+									return (
+										<Message
+											key={`msg-key_${index}`}
+											message={message}
+											isMyMessage={sub === user.sub}
+										/>
+									);
+								})
+							)}
 						</Stack>
 
-						<Box sx={{ height: '20vh', bottom: 0 }}>
-							<TextField
-								className="message-input"
-								fullWidth
-								id="chat-message"
-								maxRows={2}
-								multiline
-								placeholder="Write your message here..."
-								color="secondary"
-								sx={{
-									background:
-										'linear-gradient(149deg, rgba(116,118,164,1) 0%, rgba(59,59,90,1) 100%)',
-								}}
-							/>
-						</Box>
+						<Stack
+							direction="row"
+							justifyContent="space-between"
+							spacing={1}
+						>
+							<Stack
+								sx={{ height: '20vh', bottom: 0, width: '95%' }}
+								alignItems="center"
+							>
+								<TextField
+									className="message-input"
+									fullWidth
+									id="chat-message"
+									maxRows={2}
+									onChange={(e) =>
+										setNewMessage(e.target.value)
+									}
+									multiline
+									placeholder="Write your message here..."
+									color="secondary"
+									sx={{
+										background:
+											'linear-gradient(149deg, rgba(116,118,164,1) 0%, rgba(59,59,90,1) 100%)',
+									}}
+								/>
+							</Stack>
+
+							<SendIcon onClick={sendMessage} />
+						</Stack>
 					</Stack>
 				)}
 			</Box>

@@ -12,7 +12,7 @@ const Message = ({ message, isMyMessage }) => {
 				px={3}
 				sx={{
 					background: isMyMessage ? '#9e90cb' : '#584e97',
-					width: '90%',
+					maxWidth: '90%',
 					borderRadius: 6,
 				}}
 			>

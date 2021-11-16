@@ -11,13 +11,13 @@ export default class ChatService extends RequestAdapterService {
 			// 	true
 			// );
 
-			return [
-				{
-					partner_name: 'Chifuyu',
-					partner_avatar: 'url_avatar_chifuyu',
-					room_id: 1,
-				},
-			];
+			// return [
+			// 	{
+			// 		partner_name: 'Chifuyu',
+			// 		partner_avatar: 'url_avatar_chifuyu',
+			// 		room_id: 1,
+			// 	},
+			// ];
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
@@ -27,7 +27,9 @@ export default class ChatService extends RequestAdapterService {
 
 	async getChatRooms(payload) {
 		try {
-			// const { data } = await super.sendGetRequest(
+			// const {
+			// 	data: { data },
+			// } = await super.sendGetRequest(
 			// 	`${this.baseURL}/chat/partner-room`,
 			// 	payload,
 			// 	true
@@ -41,6 +43,43 @@ export default class ChatService extends RequestAdapterService {
 					last_chat_minute: 20573,
 				},
 			];
+			return data;
+		} catch (error) {
+			const errMsg = super.generateErrMessage(error);
+			throw new Error('Getting room list: ' + errMsg);
+		}
+	}
+
+	async getMessages(payload) {
+		try {
+			// const {
+			// 	data: { data },
+			// } = await super.sendGetRequest(
+			// 	`${this.baseURL}/message`,
+			// 	payload,
+			// 	true
+			// );
+
+			return [
+				{
+					id: 1,
+					user_id: 1,
+					room_id: 6,
+					message: 'halo?',
+					timestamp: '2021-11-01T13:10:02.000Z',
+					isSeen: 1,
+				},
+				{
+					id: 1,
+					user_id: 1,
+					sub: 'google-oauth2|115674637857996862497',
+					room_id: 6,
+					message: 'Iya dengan siapa?',
+					timestamp: '2021-11-01T13:10:02.000Z',
+					isSeen: 1,
+				},
+			];
+
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
