@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Avatar, Stack, Typography, TextField, Skeleton } from '@mui/material';
 import { Box } from '@mui/system';
@@ -18,6 +18,7 @@ const socket = io(process.env.NEXT_PUBLIC_BASE_URL);
 
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
+	const newMessageRef = useRef();
 
 	const [isLoadingMessage, setIsLoadingMessage] = useState(true);
 	const [isLoadingRoom, setIsLoadingRoom] = useState(true);
@@ -155,6 +156,8 @@ const ChatPage = () => {
 				sub: user.sub,
 				timestamp,
 			});
+
+			newMessageRef.current.value = '';
 		} catch (error) {
 			console.error(error.message);
 		}
@@ -401,12 +404,14 @@ const ChatPage = () => {
 									fullWidth
 									id="chat-message"
 									maxRows={2}
+									multiline
+									ref={newMessageRef}
+									placeholder="Write your message here..."
+									color="secondary"
+									value={newMessage}
 									onChange={(e) =>
 										setNewMessage(e.target.value)
 									}
-									multiline
-									placeholder="Write your message here..."
-									color="secondary"
 									sx={{
 										background:
 											'linear-gradient(149deg, rgba(116,118,164,1) 0%, rgba(59,59,90,1) 100%)',
