@@ -59,13 +59,19 @@ const ChatPage = () => {
 		setMessages(newMessages);
 	});
 
-	const createNewChat = async () => {
+	const createNewChat = async ({ avatar, partnerName, sub }) => {
 		try {
 			const chatService = new ChatService();
 
 			const response = await chatService.createNewChat({
 				owner_sub: user.sub,
-				keyword,
+				partner_sub: sub,
+			});
+
+			openChatRoom({
+				partner_name: partnerName,
+				partner_avatar: avatar,
+				roomid: response.roomid,
 			});
 		} catch (error) {
 			console.error(error.message);
@@ -287,6 +293,7 @@ const ChatPage = () => {
 											alignItems="center"
 											spacing={2}
 											direction="row"
+											key={`partner-${sub}`}
 											sx={{ cursor: 'pointer' }}
 											onClick={() =>
 												createNewChat({

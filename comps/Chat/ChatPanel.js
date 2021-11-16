@@ -51,7 +51,7 @@ const ChatPanel = ({ image, partnerName, message, lastMessage, onClick }) => {
 						textOverflow: 'ellipsis',
 					}}
 				>
-					{Math.ceil(lastMessage)} min
+					{lastMessage ? `${Math.ceil(lastMessage)} min` : ''}
 				</Typography>
 			</Box>
 		</Stack>

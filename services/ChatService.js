@@ -5,19 +5,14 @@ export default class ChatService extends RequestAdapterService {
 
 	async createNewChat(payload) {
 		try {
-			// const { data } = await super.sendPostRequest(
-			// 	`${this.baseURL}/chat/partner-room`,
-			// 	payload,
-			// 	true
-			// );
+			const {
+				data: { data },
+			} = await super.sendPostRequest(
+				`${this.baseURL}/chat/room`,
+				payload,
+				true
+			);
 
-			// return [
-			// 	{
-			// 		partner_name: 'Chifuyu',
-			// 		partner_avatar: 'url_avatar_chifuyu',
-			// 		room_id: 1,
-			// 	},
-			// ];
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
@@ -27,22 +22,14 @@ export default class ChatService extends RequestAdapterService {
 
 	async getChatRooms(payload) {
 		try {
-			// const {
-			// 	data: { data },
-			// } = await super.sendGetRequest(
-			// 	`${this.baseURL}/chat/partner-room`,
-			// 	payload,
-			// 	true
-			// );
+			const {
+				data: { data },
+			} = await super.sendGetRequest(
+				`${this.baseURL}/chat/partner-room`,
+				payload,
+				true
+			);
 
-			return [
-				{
-					partner_name: 'Chifuyu',
-					partner_avatar: 'url_avatar_chifuyu',
-					last_partner_message: 'Ohhh',
-					last_chat_minute: 20573,
-				},
-			];
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
@@ -52,75 +39,31 @@ export default class ChatService extends RequestAdapterService {
 
 	async getMessages(payload) {
 		try {
-			// const {
-			// 	data: { data },
-			// } = await super.sendGetRequest(
-			// 	`${this.baseURL}/message`,
-			// 	payload,
-			// 	true
-			// );
-
-			return [
-				{
-					id: 1,
-					user_id: 1,
-					room_id: 6,
-					message: 'halo?',
-					timestamp: '2021-11-01T13:10:02.000Z',
-					isSeen: 1,
-				},
-				{
-					id: 1,
-					user_id: 1,
-					sub: 'google-oauth2|115674637857996862497',
-					room_id: 6,
-					message: 'Iya dengan siapa?',
-					timestamp: '2021-11-01T13:10:02.000Z',
-					isSeen: 1,
-				},
-			];
+			const {
+				data: { data },
+			} = await super.sendGetRequest(
+				`${this.baseURL}/message`,
+				payload,
+				true
+			);
 
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
-			throw new Error('Getting room list: ' + errMsg);
+			throw new Error('Getting message list: ' + errMsg);
 		}
 	}
 
 	async getPartnerBySubId(payload) {
 		try {
-			// const { data } = await super.sendPostRequest(
-			// 	`${this.baseURL}/user/partner`,
-			// 	payload,
-			// 	true
-			// );
+			const {
+				data: { data },
+			} = await super.sendPostRequest(
+				`${this.baseURL}/user/partner`,
+				payload,
+				true
+			);
 
-			return [
-				{
-					id: 65,
-					sub: 'aasdaggg',
-					name: 'Chifuyu',
-					avatar: 'url_avatar_chifuyu',
-					created_at: '2021-11-16T02:54:40.000Z',
-					updated_at: '2021-11-15T20:59:19.000Z',
-				},
-				{
-					id: 75,
-					sub: 'hhsdaehd',
-					name: 'Daniel',
-					avatar: 'example_url_image.com',
-					created_at: '2021-11-16T02:54:42.000Z',
-					updated_at: '2021-11-15T22:53:32.000Z',
-				},
-				{
-					id: 85,
-					sub: 'asdahfas',
-					name: 'Alif',
-					avatar: 'example_url_image.com',
-					created_at: '2021-11-16T03:09:33.000Z',
-					updated_at: '2021-11-15T22:58:32.000Z',
-				},
-			];
 			return data;
 		} catch (error) {
 			const errMsg = super.generateErrMessage(error);
