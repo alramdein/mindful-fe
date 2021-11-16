@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import React, { useEffect, useState } from 'react';
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Stack, Typography, TextField } from '@mui/material';
+import { Stack, Typography, TextField, Skeleton } from '@mui/material';
 import { Box } from '@mui/system';
+
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 import ChatPanel from '../comps/Chat/ChatPanel';
 import Message from '../comps/Chat/Message';
@@ -13,17 +15,24 @@ import ChatService from '../services/ChatService';
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
 	const [keyword, setKeyword] = useState('');
+	const [isLoadingRoom, setIsLoadingRoom] = useState(true);
+	const [rooms, setRooms] = useState([]);
 
 	const getChatRooms = async () => {
 		try {
+			setIsLoadingRoom(true);
 			const chatService = new ChatService();
 
-			const response = ChatService.getChatRooms({
-				sub: user.sub,
+			const response = await chatService.getChatRooms({
+				owner_sub: user.sub,
 				keyword,
 			});
+
+			setRooms(response);
 		} catch (error) {
 			console.error(error.message);
+		} finally {
+			setIsLoadingRoom(false);
 		}
 	};
 
@@ -32,6 +41,14 @@ const ChatPage = () => {
 			await getChatRooms();
 		})();
 	}, []);
+
+	useEffect(() => {
+		(async () => {
+			if (keyword.length > 3) {
+				await getChatRooms();
+			}
+		})();
+	}, [keyword]);
 
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>{error.message}</div>;
@@ -72,8 +89,7 @@ const ChatPage = () => {
 						id="friend-search"
 						placeholder="Search friend..."
 						color="secondary"
-						onChange={(e) => console.log(e)}
-						ref={searchInputRef}
+						onChange={(e) => setKeyword(e.target.value)}
 						sx={{
 							background:
 								'linear-gradient(149deg, rgba(116,118,164,1) 0%, rgba(59,59,90,1) 100%)',
@@ -85,9 +101,32 @@ const ChatPage = () => {
 						sx={{ maxHeight: '85vh', overflowY: 'auto' }}
 						spacing={3}
 					>
-						{new Array(8).fill('').map((_, index) => (
-							<ChatPanel key={`cht-pnl-key_${index}`} />
-						))}
+						{isLoadingRoom ? (
+							new Array(8)
+								.fill('')
+								.map((_, index) => <Skeleton varian="text" />)
+						) : rooms.length === 0 ? (
+							<Typography sx={{ color: 'white' }}>
+								Start chatting with your friend by clicking the
+								+ icon on top right corner
+							</Typography>
+						) : (
+							rooms.map(
+								({
+									partner_name,
+									partner_avatar,
+									last_partner_message,
+									last_chat_minute,
+								}) => (
+									<ChatPanel
+										partnerName={partner_name}
+										image={partner_avatar}
+										message={last_partner_message}
+										lastMessage={last_chat_minute}
+									/>
+								)
+							)
+						)}
 					</Stack>
 				</Stack>
 			</Box>
