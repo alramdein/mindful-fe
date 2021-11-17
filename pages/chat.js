@@ -128,7 +128,7 @@ const ChatPage = () => {
 
 			setIsSelectingPartner(true);
 		} catch (error) {
-			error.message(true);
+			console.error(error.message);
 		} finally {
 			setIsLoadingRoom(false);
 		}
