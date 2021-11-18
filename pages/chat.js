@@ -379,6 +379,9 @@ const ChatPage = () => {
 								</Typography>
 							) : (
 								messages.map(({ message, sub }, index) => {
+									console.log(sub);
+									console.log(user.sub);
+
 									return (
 										<Message
 											key={`msg-key_${index}`}
