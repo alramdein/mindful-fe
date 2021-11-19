@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;800&family=Quicksand&display=swap');
+
+html,
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+
+p, h1, h2, span {
+  color: #0F2046;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
