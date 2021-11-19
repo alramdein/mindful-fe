@@ -1,7 +1,6 @@
 module.exports = {
   reactStrictMode: true,
   future: { webpack5: true},
-
   async rewrites() {
     return [
       {
@@ -15,6 +14,6 @@ module.exports = {
     ];
   },
   images: {
-    domains: ['s.gravatar.com', 'lh3.googleusercontent.com'],
+    domains: ['s.gravatar.com'],
   },
 };
