@@ -82,6 +82,7 @@ const ChatPage = () => {
 		newMessages.push(message);
 
 		setMessages(newMessages);
+		getChatRooms();
 	});
 
 	socket.on('isOnline', (isOnline) => {
