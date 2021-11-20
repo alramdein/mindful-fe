@@ -102,7 +102,9 @@ const ChatPage = () => {
 	};
 
 	const onUpdatePartnerRoomHandler = () => getChatRooms();
-	const onIsOnlineHandler = (isOnline) => setIsPartnerOnline(isOnline);
+	const onIsOnlineHandler = (isOnline) => {
+		setIsPartnerOnline(isOnline.is_online);
+	};
 
 	const createNewChat = async ({ avatar, partnerName, sub }) => {
 		try {
