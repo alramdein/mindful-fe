@@ -178,10 +178,13 @@ const ChatPage = () => {
 
 	const sendMessage = async () => {
 		try {
+			if (newMessage === '') return;
+
 			const timestamp = new Date()
 				.toISOString()
 				.replace(/T/g, ' ')
 				.replace(/Z/g, '');
+
 			socket.emit('newMessage', {
 				message: newMessage,
 				room_id: selectedRoom.roomId,
