@@ -3,7 +3,10 @@ import { Stack, Typography } from '@mui/material';
 
 const Message = ({ message, isMyMessage }) => {
 	return (
-		<Stack direction="row" justifyContent={isMyMessage ? 'end' : 'start'}>
+		<Stack
+			direction="row"
+			justifyContent={isMyMessage ? 'flex-end' : 'flex-start'}
+		>
 			<Typography
 				color="white"
 				textAlign={isMyMessage ? 'end' : 'start'}
