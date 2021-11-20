@@ -57,6 +57,8 @@ const ChatPage = () => {
 					owner_sub: user.sub,
 					room_id: selectedRoom.roomId,
 				});
+
+				getChatRooms();
 			}
 		})();
 	}, [selectedRoom]);
@@ -80,6 +82,7 @@ const ChatPage = () => {
 		newMessages.push(message);
 
 		setMessages(newMessages);
+		getChatRooms();
 	});
 
 	socket.on('isOnline', (isOnline) => {
@@ -178,18 +181,23 @@ const ChatPage = () => {
 
 	const sendMessage = async () => {
 		try {
-			const timestamp = new Date()
-				.toISOString()
-				.replace(/T/g, ' ')
-				.replace(/Z/g, '');
-			socket.emit('newMessage', {
-				message: newMessage,
-				room_id: selectedRoom.roomId,
-				sub: user.sub,
-				timestamp,
-			});
+			if (newMessage === '' || !newMessage) {
+				return;
+			} else {
+				const timestamp = new Date()
+					.toISOString()
+					.replace(/T/g, ' ')
+					.replace(/Z/g, '');
 
-			setNewMessage('');
+				socket.emit('newMessage', {
+					message: newMessage,
+					room_id: selectedRoom.roomId,
+					sub: user.sub,
+					timestamp,
+				});
+
+				setNewMessage('');
+			}
 		} catch (error) {
 			console.error(error.message);
 		}

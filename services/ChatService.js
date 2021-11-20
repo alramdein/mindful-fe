@@ -70,8 +70,6 @@ export default class ChatService extends RequestAdapterService {
 	}
 
 	async readMessages(payload) {
-		console.log('Kesini kan');
-
 		try {
 			const { data } = await super.sendPutRequest(
 				`${this.baseURL}/message/read`,
