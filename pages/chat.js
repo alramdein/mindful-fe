@@ -141,6 +141,12 @@ const ChatPage = () => {
 		}
 	};
 
+	const onChatKeyUpHandler = (e) => {
+		if (e.key === 'Enter' && e.shiftKey) {
+			sendMessage();
+		}
+	};
+
 	const openChoosePartnerPanel = async () => {
 		try {
 			setIsLoadingRoom(true);
@@ -183,7 +189,7 @@ const ChatPage = () => {
 				timestamp,
 			});
 
-			newMessageRef.current.value = '';
+			setNewMessage('');
 		} catch (error) {
 			console.error(error.message);
 		}
@@ -461,6 +467,7 @@ const ChatPage = () => {
 									placeholder="Write your message here..."
 									color="secondary"
 									value={newMessage}
+									onKeyUp={onChatKeyUpHandler}
 									onChange={(e) =>
 										setNewMessage(e.target.value)
 									}
