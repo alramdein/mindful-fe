@@ -16,6 +16,8 @@ import ChatService from '../services/ChatService';
 
 const socket = io(process.env.NEXT_PUBLIC_BASE_URL);
 
+const currMessages = [];
+
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
 	const newMessageRef = useRef();
@@ -77,17 +79,29 @@ const ChatPage = () => {
 		};
 	}, []);
 
-	socket.on('newMessage', (message) => {
-		const newMessages = [...messages];
+	useEffect(() => {
+		socket.on('newMessage', onNewMessageHandler);
+		socket.on('updatePartnerRooms', onUpdatePartnerRoomHandler);
+		socket.on('isOnline', onIsOnlineHandler);
+
+		return () => {
+			socket.off('newMessage', onNewMessageHandler);
+			socket.off('updatePartnerRooms', onUpdatePartnerRoomHandler);
+			socket.off('isOnline', onIsOnlineHandler);
+		};
+	}, []);
+
+	const onNewMessageHandler = (message) => {
+		const newMessages = [...currMessages];
 		newMessages.push(message);
 
 		setMessages(newMessages);
+		currMessages = newMessages;
 		getChatRooms();
-	});
+	};
 
-	socket.on('isOnline', (isOnline) => {
-		setIsPartnerOnline(isOnline);
-	});
+	const onUpdatePartnerRoomHandler = () => getChatRooms();
+	const onIsOnlineHandler = (isOnline) => setIsPartnerOnline(isOnline);
 
 	const createNewChat = async ({ avatar, partnerName, sub }) => {
 		try {
@@ -137,10 +151,15 @@ const ChatPage = () => {
 			});
 
 			setMessages(response);
+			currMessages = response;
 		} catch (error) {
 			console.error(error.message);
 		} finally {
 			setIsLoadingMessage(false);
+			const el = document.getElementById('chat-room-wrapper');
+
+			console.log(el);
+			el.scrollTop = el.scrollHeight;
 		}
 	};
 
@@ -197,6 +216,10 @@ const ChatPage = () => {
 				});
 
 				setNewMessage('');
+
+				socket.emit('updatePartnerRooms', {
+					room_id: selectedRoom.roomId,
+				});
 			}
 		} catch (error) {
 			console.error(error.message);
@@ -416,13 +439,14 @@ const ChatPage = () => {
 
 						<Stack
 							className="chat-room"
+							id="chat-room-wrapper"
+							spacing={3}
 							sx={{
 								maxHeight: '70vh',
 								minHeight: '70vh',
 								overflowY: 'auto',
 								scrollbarWidth: 'none',
 							}}
-							spacing={3}
 						>
 							{isLoadingMessage ? (
 								new Array(8)
