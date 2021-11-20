@@ -68,4 +68,21 @@ export default class ChatService extends RequestAdapterService {
 			throw new Error('Getting room list: ' + errMsg);
 		}
 	}
+
+	async readMessages(payload) {
+		console.log('Kesini kan');
+
+		try {
+			const { data } = await super.sendPutRequest(
+				`${this.baseURL}/message/read`,
+				payload,
+				true
+			);
+
+			return data;
+		} catch (error) {
+			const errMsg = super.generateErrMessage(error);
+			throw new Error('Update message read status: ' + errMsg);
+		}
+	}
 }
