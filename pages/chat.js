@@ -17,6 +17,7 @@ import ChatService from '../services/ChatService';
 const socket = io(process.env.NEXT_PUBLIC_BASE_URL);
 
 const currMessages = [];
+const currRoomId = null;
 
 const ChatPage = () => {
 	const { user, error, isLoading } = useUser();
@@ -158,7 +159,6 @@ const ChatPage = () => {
 			setIsLoadingMessage(false);
 			const el = document.getElementById('chat-room-wrapper');
 
-			console.log(el);
 			el.scrollTop = el.scrollHeight;
 		}
 	};
@@ -194,6 +194,7 @@ const ChatPage = () => {
 			roomId: room_id,
 			partnerName: partner_name,
 		});
+		currRoomId = room_id;
 
 		socket.emit('join', room_id);
 	};
@@ -227,21 +228,21 @@ const ChatPage = () => {
 	};
 
 	const setUserOffline = () => {
-		if (selectedRoom) {
-			socket.emit('isOnline', {
-				room_id: selectedRoom.roomId,
-				is_online: false,
-			});
-		}
+		console.log('I am logging of');
+
+		socket.emit('isOnline', {
+			room_id: currRoomId,
+			is_online: false,
+		});
 	};
 
 	const setUserOnline = () => {
-		if (selectedRoom) {
-			socket.emit('isOnline', {
-				room_id: selectedRoom.roomId,
-				is_online: true,
-			});
-		}
+		console.log('I am here');
+
+		socket.emit('isOnline', {
+			room_id: currRoomId,
+			is_online: true,
+		});
 	};
 
 	if (isLoading) return <div>Loading...</div>;
