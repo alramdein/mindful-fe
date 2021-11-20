@@ -55,7 +55,7 @@ const ChatPage = () => {
 
 				await chatService.readMessages({
 					owner_sub: user.sub,
-					room_id: selectedRoom.room_id,
+					room_id: selectedRoom.roomId,
 				});
 			}
 		})();
