@@ -22,8 +22,6 @@ function Profile() {
 	useEffect(() => {
 		(async () => {
 			const isAlreadyStoreProfile = checkIfUserAlreadyStoreProfile();
-
-			console.log(isAlreadyStoreProfile);
 			if (!isAlreadyStoreProfile) await storeProfile();
 		})();
 	}, []);

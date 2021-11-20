@@ -29,6 +29,7 @@ const ChatPage = () => {
 	const [partnerKeyword, setPartnerKeyword] = useState('');
 	const [partners, setPartners] = useState([]);
 	const [rooms, setRooms] = useState([]);
+	const [isPartnerOnline, setIsPartnerOnline] = useState(false);
 	const [selectedRoom, setSelectedRoom] = useState(null);
 
 	useEffect(() => {
@@ -48,16 +49,41 @@ const ChatPage = () => {
 	useEffect(() => {
 		(async () => {
 			if (selectedRoom) {
+				const chatService = new ChatService();
+
 				await getMessagesByRoomId();
+
+				await chatService.readMessages({
+					owner_sub: user.sub,
+					room_id: selectedRoom.room_id,
+				});
 			}
 		})();
 	}, [selectedRoom]);
+
+	useEffect(() => {
+		if (window) {
+			window.addEventListener('focus', setUserOnline);
+			window.addEventListener('blur', setUserOffline);
+		}
+
+		return () => {
+			if (window) {
+				window.removeEventListener('focus', setUserOnline);
+				window.removeEventListener('blur', setUserOffline);
+			}
+		};
+	}, []);
 
 	socket.on('newMessage', (message) => {
 		const newMessages = [...messages];
 		newMessages.push(message);
 
 		setMessages(newMessages);
+	});
+
+	socket.on('isOnline', (isOnline) => {
+		setIsPartnerOnline(isOnline);
 	});
 
 	const createNewChat = async ({ avatar, partnerName, sub }) => {
@@ -72,7 +98,7 @@ const ChatPage = () => {
 			openChatRoom({
 				partner_name: partnerName,
 				partner_avatar: avatar,
-				room_id: response.roomid,
+				room_id: response.room_id,
 			});
 
 			setIsSelectingPartner(false);
@@ -163,6 +189,24 @@ const ChatPage = () => {
 		}
 	};
 
+	const setUserOffline = () => {
+		if (selectedRoom) {
+			socket.emit('isOnline', {
+				room_id: selectedRoom.roomId,
+				is_online: false,
+			});
+		}
+	};
+
+	const setUserOnline = () => {
+		if (selectedRoom) {
+			socket.emit('isOnline', {
+				room_id: selectedRoom.roomId,
+				is_online: true,
+			});
+		}
+	};
+
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>{error.message}</div>;
 
@@ -224,7 +268,7 @@ const ChatPage = () => {
 							<Stack
 								className="chat-panel"
 								sx={{ maxHeight: '85vh', overflowY: 'auto' }}
-								spacing={3}
+								spacing={1}
 							>
 								{isLoadingRoom ? (
 									new Array(8)
@@ -248,8 +292,15 @@ const ChatPage = () => {
 											last_partner_message,
 											last_chat_minute,
 											room_id,
+											unread_messages,
 										}) => (
 											<ChatPanel
+												partnerName={partner_name}
+												image={partner_avatar}
+												message={last_partner_message}
+												lastMessage={last_chat_minute}
+												key={`cht-pnl-key_${room_id}`}
+												unread={unread_messages}
 												onClick={() =>
 													openChatRoom({
 														partner_name,
@@ -258,11 +309,6 @@ const ChatPage = () => {
 														room_id,
 													})
 												}
-												partnerName={partner_name}
-												image={partner_avatar}
-												message={last_partner_message}
-												lastMessage={last_chat_minute}
-												key={`cht-pnl-key_${room_id}`}
 											/>
 										)
 									)
@@ -349,7 +395,7 @@ const ChatPage = () => {
 						>
 							<ChatRoomHeader
 								name={selectedRoom.partnerName}
-								isOnline={true}
+								isOnline={isPartnerOnline}
 								image={selectedRoom.avatar}
 							/>
 						</Stack>
@@ -378,18 +424,21 @@ const ChatPage = () => {
 									Start chatting with your fiend
 								</Typography>
 							) : (
-								messages.map(({ message, sub }, index) => {
-									console.log(sub);
-									console.log(user.sub);
-
-									return (
-										<Message
-											key={`msg-key_${index}`}
-											message={message}
-											isMyMessage={sub === user.sub}
-										/>
-									);
-								})
+								messages.map(
+									(
+										{ created_at, message, sub, is_seen },
+										index
+									) => {
+										return (
+											<Message
+												key={`msg-key_${index}`}
+												message={message}
+												isMyMessage={sub === user.sub}
+												isSeen={is_seen}
+											/>
+										);
+									}
+								)
 							)}
 						</Stack>
 
