@@ -70,7 +70,7 @@ const ChatPanel = ({
 					{lastMessage ? renderLastMinute() : ''}
 				</Typography>
 
-				{unread && (
+				{unread > 0 && (
 					<Stack
 						alignItems="center"
 						justifyContent="center"
