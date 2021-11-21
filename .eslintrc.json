@@ -1,3 +1,62 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@alramdein 
+alramdein
+/
+mindful-fe
+Public
+1
+0
+0
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+mindful-fe/.eslintrc.json
+
+Raka feat(chat): chat page
+…
+Latest commit 55624f5 7 days ago
+ History
+ 0 contributors
+29 lines (29 sloc)  497 Bytes
+   
 {
-  "extends": "next/core-web-vitals"
+	"extends": [
+		"next/core-web-vitals",
+		"eslint:recommended",
+		"plugin:react/recommended",
+		"react-hooks"
+	],
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 2018,
+		"sourceType": "module",
+		"allowImportExportEverywhere": true
+	},
+	"plugins": ["react", "react-hooks"],
+	"rules": {
+		"react/prop-types": 0
+	}
 }

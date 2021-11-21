@@ -3,39 +3,37 @@ import MoodUpdate from '../MoodUpdate';
 import MoodCard from '../MoodCard';
 import Avatar from '../Avatar';
 import Moods from '../Moods';
-import router, {useRouter} from 'next/router';
+import router, { useRouter } from 'next/router';
 import AvatarPicture from '../AvatarPicture';
 
 const Container = styled.div`
-display:flex;
-flex-direction:column;
-height:100vh;
-width:22%;
-background-color:#F9FBFC;
-position:fixed;
-z-index: 2;
-align-items:center;
-gap:30px;
-color: #0F2046;
-padding: 31px;
-`
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 22%;
+	background-color: #f9fbfc;
+	position: fixed;
+	z-index: 2;
+	align-items: center;
+	gap: 30px;
+	color: #0f2046;
+	padding: 31px;
+`;
 
-
-
-const MoodBar = ({
-
-}) => {
-    return <Container>
-            <MoodUpdate/>
-            <MoodCard/>
-        <MoodUpdate subhead="Update Mood" text="Update"/>
-        <Moods src="check.svg"/>
-        <Moods/>
-        <Moods/>
-        <Moods/>
-        <Moods/>
-    </Container>
-}
+const MoodBar = ({}) => {
+	return (
+		<Container>
+			<MoodUpdate />
+			<MoodCard />
+			<MoodUpdate subhead="Update Mood" text="Update" />
+			<Moods src="check.svg" />
+			<Moods />
+			<Moods />
+			<Moods />
+			<Moods />
+		</Container>
+	);
+};
 
 export default MoodBar;
 
@@ -137,7 +135,7 @@ export default MoodBar;
 //     flex-direction: column;
 // `
 
-// const MoodContIndv =  styled.div`   
+// const MoodContIndv =  styled.div`
 //     display: flex;
 //     flex-direction: row;
 //     justify-content: space-between;
@@ -153,13 +151,12 @@ export default MoodBar;
 
 // const Check = styled.button`
 //     display: flex;
-//     background: url(/open.svg) no-repeat;    
+//     background: url(/open.svg) no-repeat;
 //     cursor: pointer;
 //     border: none;
 //     width: 29px;
 //     height: 29px;
 // `
-
 
 // const MoodBar = ({
 
@@ -205,7 +202,7 @@ export default MoodBar;
 //                 <MoodContIndv>
 //                     <AvatarPicture height={"76px"} width={"76px"}></AvatarPicture>
 //                     <Check></Check>
-//                 </MoodContIndv> 
+//                 </MoodContIndv>
 //             </MoodCont>
 //         </UpdateCurrentMoodCont>
 //     </Container>
