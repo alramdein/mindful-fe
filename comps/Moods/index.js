@@ -1,54 +1,59 @@
 import { borderRadius, width } from '@mui/system';
 import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import AvatarPicture from '../AvatarPicture';
 
 const Container = styled.div`
-display:flex;
-flex-direction:row;
-align-items:center;
-width:90%;
-`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 90%;
+`;
 
 const Circle = styled.img`
-width:${props=>props.width};
-height:${props=>props.height};
-box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.25);
-border-radius:${props=>props.borderRadius};
-`
+	width: ${(props) => props.width};
+	height: ${(props) => props.height};
+	border-radius: ${(props) => props.borderRadius};
+	background-color: #b0d8d2;
+`;
 
-const Holder1 = styled.div `
-display:flex;
-flex:1;
-align-items:center;
-justify-content:flex-start;
-`
-const Holder2 = styled.div `
-display:flex;
-flex:1;
-align-items:center;
-justify-content:flex-end;
-height:100%;
-width:100%;
-`
+const Holder1 = styled.div`
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: flex-start;
+`;
+const Holder2 = styled.div`
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: flex-end;
+	height: 100%;
+	width: 100%;
+`;
 
-const Check = styled.img `
-width:20px;
-`
+const Check = styled.img`
+	width: 20px;
+`;
 
 const Moods = ({
-    source="logo2.svg",
-    width="70px",
-    height="70px",
-    borderRadius="160px",
-    src="/open.svg"
+	source = 'logo2.svg',
+	width = '70px',
+	height = '70px',
+	borderRadius = '160px',
+	src = '/open.svg',
+	hover = 'false',
 }) => {
-    return <Container>
-        <Holder1>
-            <Circle width={width} height={height} borderRadius={borderRadius} src={source}/>
-        </Holder1>
-        <Holder2>
-            <Check src={src}/>
-        </Holder2>
-    </Container>
-}
+	return (
+		<Container>
+			<Holder1>
+				<AvatarPicture height="79px" width="79px" />
+			</Holder1>
+			<Holder2>
+				<Check src={src} />
+			</Holder2>
+		</Container>
+	);
+};
 
 export default Moods;

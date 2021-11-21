@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
+import Button from '../comps/Button';
 import Link from 'next/link';
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Button } from '@mui/material';
+import { Button as ChatButton } from '@mui/material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-
 import AuthService from '../services/AuthService';
 
 const checkIfUserAlreadyStoreProfile = () => {
@@ -22,6 +22,7 @@ function Profile() {
 	useEffect(() => {
 		(async () => {
 			const isAlreadyStoreProfile = checkIfUserAlreadyStoreProfile();
+
 			if (!isAlreadyStoreProfile) await storeProfile();
 		})();
 	}, []);
@@ -38,25 +39,34 @@ function Profile() {
 	return (
 		user && (
 			<div>
-				<p>{JSON.stringify(user, null, 2)}</p>
+				{/* Kailin hide this part */}
+				{/* <p>{JSON.stringify(user, null, 2)}</p> */}
 				<Image
 					src={user.picture}
-					height="100"
-					width="100"
 					alt={user.name}
+					width={200}
+					height={200}
 				/>
-
 				<h2>name: </h2>
 				<span>{user.name}</span>
 				<h2>email: </h2>
 				<span>{user.email}</span>
-
 				<h1>
-					<Link href="/">Back to Home</Link>
+					<Button routeTo="./" ButtonText="Home" type="submit" />
+					<Button
+						routeTo="./journal"
+						ButtonText="Journal Page"
+						type="submit"
+					/>
+					<Button
+						routeTo="./api/auth/logout"
+						ButtonText="Logout"
+						type="submit"
+					/>
 				</h1>
 
 				<Link href="/chat">
-					<Button
+					<ChatButton
 						sx={{
 							background: 'skyblue',
 							bottom: 30,
@@ -66,7 +76,7 @@ function Profile() {
 						}}
 					>
 						<ChatBubbleIcon sx={{ color: 'white' }} /> Go To Chat
-					</Button>
+					</ChatButton>
 				</Link>
 			</div>
 		)
